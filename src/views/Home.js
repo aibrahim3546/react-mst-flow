@@ -9,24 +9,18 @@ type Props = {
 
 class Home extends Component<Props> {
   componentDidMount() {
-
-  }
-
-  setName = () => {
     const { rootStore } = this.props;
-    rootStore.authStore.setName('Ibrahim');
+
+    rootStore.movieStore.fetchMovies();
+
   }
 
   render() {
-    const { authStore } = this.props.rootStore;
     return (
       <React.Fragment>
       <div>
         Home
       </div>
-       <button onClick={this.setName}>
-          Add Name here
-        </button>
         <div>
           <Link to="/movie">
             Movie Page

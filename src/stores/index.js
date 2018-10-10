@@ -1,11 +1,11 @@
 // @flow
 
 import { types } from 'mobx-state-tree';
-import AuthStore from './AuthStore';
+import MovieStore from './MovieStore';
 
 const RootStore = types
   .model('RootStore', {
-    authStore: types.optional(AuthStore, {}),
+    movieStore: types.optional(MovieStore, {}),
   });
 
 const rootStore = RootStore.create({});

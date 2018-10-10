@@ -1,0 +1,14 @@
+body {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+}
+
+#app {
+  background-color: #f9f9f9;
+  height: 100%;
+  font-family: 'Proxima Nova Soft', 'Helvetica Neue', sans-serif;
+  position: absolute;
+  width: 100%;
+}
