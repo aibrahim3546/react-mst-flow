@@ -14,10 +14,12 @@
     "mobx": "^4.0.0",
     "mobx-react": "^5.2.8",
     "mobx-state-tree": "^3.5.0",
+    "moment": "^2.22.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
+    "react-slick": "^0.23.1",
     "styled-components": "^3.4.10"
   },
   "devDependencies": {

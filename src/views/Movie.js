@@ -1,56 +1,132 @@
 import React, { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
 import { observable, decorate, action } from 'mobx';
 import styled from 'styled-components';
+import moment from 'moment';
 
-const PosterContainer = styled.div`
-  float: right;
-  width: 40%;
-  margin: 25px 5%;
-  height: 200px;
-  background-image: url(${props => props.src});
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 5px;
-  box-shadow: 1px 1px 20px rgba(0,0,0,0.5);
-  transition: All 0.25s;
-   opacity: ${props => props.isWidth ? 1 : 0};
-`;
 
 const Container = styled.div`
-  background: #f46b45;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #eea849, #f46b45);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #eea849, #f46b45); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  position: absolute;
-  width: 100%;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
 `;
 
-const TitleContainer = styled.div`
+const Box = styled.div`
+  height: 370px;
+  width: 115%;
+  background-color: #000;
+  transform: rotate(11deg);
+  position: fixed;
+  top: -161px;
+  max-width: 480px;
+  z-index: 1;
+`;
+
+const Label = styled.div`
   color: #fff;
-  padding: 30px 40px 0;
-  font-size: 25px;
-  font-weight: bold;
+  font-size: 30px;
+  padding-top: 20px;
+  font-weight: 500;
 `;
 
 const Button = styled.div`
-  border-radius: 4px;
-  border: 1px solid #fff;
-  padding: 10px 0;
-  text-align: center;
   color: #fff;
-  font-weight: bold;
-  ${props => props.primary && `
-    background-color: rgba(255,255,255,0.9);
-    box-shadow: 1px 1px 20px rgba(0,0,0,0.5);
-    color: #f46b45;
-  `}
+  display: inline-block;
+  font-size: 18px;
+  width: 120px;
+  text-align: center;
+  font-weight: 500;
+  padding-bottom: 15px;
 
   :active {
-    opacity: 0.15;
+    color: #aaa;
   }
 `;
+
+const Line = styled.div`
+  width: 120px;
+  transition: all 0.25s;
+  height: 1px;
+  border: 1px solid #fff;
+  border-radius: 3px;
+  margin-left: ${props => props.isUpcoming ? '120px' : '0'};
+`;
+
+const MoviePoster = styled.div`
+  height: 160px;
+  width: 100%;
+  background-image: url(${props => props.src});
+  background-position:center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
+`;
+
+const MoviesContainer = styled.table`
+  width: 100%;
+  margin-top: 30px;
+  border-collapse: collapse;
+  td {
+    padding: 0;
+  }
+`;
+
+const InfoContainer = styled.div`
+  border-radius: 5px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
+  padding: 10px 15px;
+  background-color: #fff;
+`;
+
+const Title = styled.div`
+  font-weight: 500;
+  font-size: 13px;
+  padding-bottom: 13px;
+  color: #222;
+`;
+
+const ReleaseDate = styled.div`
+  color: #333;
+  font-size: 11px;
+  padding-bottom: 12px;
+`;
+
+const Rating = styled.div`
+  color: #FFD700;
+  font-size: 12px;
+  padding-bottom: 10px;
+  font-weight: 500;
+`;
+
+const Plot = styled.div`
+  color: #888;
+  font-size: 10px;
+`;
+
+const MovieContainer = styled.div`
+  margin-top: 150px;
+  transition: All 0.29s;
+  position: relative;
+  left: ${props => props.isLoading ? '-100%' : '0'};
+  opacity: ${props => props.isLoading ? 0 : 1};
+`;
+
+const truncatePlot = function(str, length, ending) {
+  if (length == null) {
+    length = 100;
+  }
+  if (ending == null) {
+    ending = '...';
+  }
+  if (str.length > length) {
+    return str.substring(0, length - ending.length) + ending;
+  } else {
+    return str;
+  }
+};
 
 type Props = {
   rootStore: Object,
@@ -71,69 +147,96 @@ class Movie extends Component<Props> {
   }
 
   observableState = {
+    isUpcoming: false,
     isLoading: true,
-    isTopRated: true,
-    isWidth: true,
   }
 
-  onChangeTab = () => {
-    this.observableState.isWidth = false;
-    this.observableState.isTopRated = !this.observableState.isTopRated;
-
-    // setTimeout(() => {
-    //   this.observableState.isTopRated = !this.observableState.isTopRated;
-    // }, 250);
+  onChangeTab = (isUpcoming) => {
+    const { observableState } = this;
+    this.observableState.isLoading = true;
+    if (isUpcoming) {
+      observableState.isUpcoming = true;
+    } else {
+      observableState.isUpcoming = false;
+    }
     setTimeout(() => {
-      this.observableState.isWidth = true
-    }, 300);
-    // this.observableState.isTopRated = !this.observableState.isTopRated;
+      this.observableState.isLoading = false;
+    }, 200);
   }
+
+  renderMovies = (movies) => (
+    movies.map(each => (
+      <div>
+        <MoviesContainer>
+          <tbody>
+              <tr>
+                <td style={{ width: '35%' }}>
+                  <MoviePoster src={each.posterUrl}/>
+                </td>
+                <td>
+                  <InfoContainer>
+                    <Title>{each.title}</Title>
+                    <ReleaseDate>{moment(each.releaseDate).format('DD MMM YYYY')}</ReleaseDate>
+                    <Rating>{each.rating}</Rating>
+                    <Plot>{truncatePlot(each.overview, 100)}</Plot>
+                  </InfoContainer>
+                </td>
+              </tr>
+            
+          </tbody>
+        </MoviesContainer>
+        
+      </div>
+      ))
+  )
 
   render() {
     const { movieStore } = this.props.rootStore;
-    const { isLoading, isTopRated, isWidth } = this.observableState;
+    const { topRatedMovies, upcomingMovies } = movieStore;
+    const { isUpcoming, isLoading } = this.observableState;
+
+    const settings = {
+      dots: false,
+      infinite: false,
+      speed: 200,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      vertical: true,
+      verticalSwiping: true,
+    };
     return (
-      <Container>
-        <TitleContainer>
-        {isTopRated ?
-        'Top Rated Movies' :
-        'Upcoming Movies'
-        }
-        </TitleContainer>
-
-
-        <table style={{ width: '100%', padding: '20px 20px 0', opacity: isLoading ? 0 : 1, transition: 'All 1s'  }}>
-          <tbody>
-            <tr>
-              <td style={{ padding: '5px 5%', width: '50%' }}>
-                <Button onClick={this.onChangeTab} primary={isTopRated}>Top Rated</Button>
-              </td>
-              <td style={{ padding: '5px 5%', width: '50%' }}>
-                <Button onClick={this.onChangeTab} primary={!isTopRated}>Coming Soon</Button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div style={{ padding: isLoading ? '100% 20px' : '10px 20px 20px', opacity: isLoading ? 0 : 1, transition: 'All 1s' }}>
-        {!isLoading && isTopRated &&
-          movieStore.topRatedMovies.map(each => (
-            <PosterContainer
-              key={each.id}
-              src={each.posterUrl}
-              isWidth={isWidth}
-            />
-          ))}
-          {!isLoading && !isTopRated &&
-          movieStore.upcomingMovies.map(each => (
-            <PosterContainer
-              key={each.id}
-              src={each.posterUrl}
-              isWidth={isWidth}
-            />
-          ))}
+      <Fragment>
+        <Box></Box>
+        <div style={{ position: 'fixed', top: 0,  backgroundColor: '#000', width: '100%', zIndex: 10, padding: '0 20px'}}>
+          <Label>
+            {isUpcoming ?
+              'Upcoming' : 'Top Rated'
+            }
+          </Label>
+          <div style={{ paddingRight: 25, marginTop: 25 }}>
+            <Button onClick={() => this.onChangeTab(false)}>
+              Top Rated
+            </Button>
+            <Button onClick={() => this.onChangeTab(true)}>
+              Upcoming
+            </Button>
+          </div>
+          <Line isUpcoming={isUpcoming} />
         </div>
-      </Container>
+        <Container>
+          <MovieContainer isLoading={isLoading}>
+            {!isLoading && 
+              <Fragment>
+              {isUpcoming ?
+                this.renderMovies(upcomingMovies) :
+                this.renderMovies(topRatedMovies)
+              }
+              </Fragment>
+            }
+          </MovieContainer>
+        </Container>
+        <Box style={{ top: '94%', left: -45 }}></Box>
+      </Fragment>
     );
   }
 }
