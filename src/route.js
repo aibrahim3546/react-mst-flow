@@ -5,23 +5,29 @@ import { Provider } from 'mobx-react';
 import rootStore from './stores';
 import App from './App';
 
+import ScrollToTop from './ScrollToTop';
+
 import Home from './views/Home';
-import Movie from './views/Movie';
+import Movies from './views/Movies';
+import MovieInfo from './views/MovieInfo';
 
 import BottomNavBar from './components/BottomNavBar';
 
 export default () => (
   <Provider rootStore={rootStore}>
-  <App>
+    <App>
       <HashRouter>
-        <Switch>
-          <BottomNavBar>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/movies" component={Movie}/>
-          </BottomNavBar>
-        </Switch>
+        <ScrollToTop>
+          <Switch>
+            <Route exact path="/movie/:id" component={MovieInfo}/>
+            <BottomNavBar>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/movies" component={Movies}/>
+            </BottomNavBar>
+          </Switch>
+        </ScrollToTop>
       </HashRouter>
-   </App>
+    </App>
   </Provider>
   
 );

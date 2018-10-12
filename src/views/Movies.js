@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
 import { observable, decorate, action } from 'mobx';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
 
@@ -10,27 +11,13 @@ type Props = {
 
 type ObservableState = {
   isLoading: boolean,
-  isMovie: boolean,
   isUpcoming: boolean,
-  movie: Object,
-  marginTop: number,
 }
 
 const Container = styled.div`
   padding: 0 20px 80px;
   position: relative;
   z-index: 2;
-`;
-
-const Box = styled.div`
-  height: 370px;
-  width: 115%;
-  background-color: #000;
-  transform: rotate(11deg);
-  position: fixed;
-  top: -161px;
-  max-width: 480px;
-  z-index: 1;
 `;
 
 const Label = styled.div`
@@ -47,7 +34,7 @@ const Button = styled.div`
   width: 120px;
   text-align: center;
   font-weight: 500;
-  padding-bottom: 15px;
+  padding-bottom: 8px;
 
   :active {
     color: #aaa;
@@ -58,9 +45,10 @@ const Line = styled.div`
   width: 120px;
   transition: all 0.25s;
   height: 1px;
-  border: 1px solid #fff;
+  border: 3px solid #fff;
   border-radius: 3px;
   margin-left: ${props => props.isUpcoming ? '120px' : '0'};
+  margin-bottom: 1px;
 `;
 
 const MoviePoster = styled.div`
@@ -70,7 +58,7 @@ const MoviePoster = styled.div`
   background-position:center;
   background-size: cover;
   background-repeat: no-repeat;
-  border-radius: 5px;
+  border-radius: 1px;
   box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
   max-height: 160px;
 `;
@@ -88,7 +76,7 @@ const MoviesContainer = styled.table`
 `;
 
 const InfoContainer = styled.div`
-  border-radius: 5px;
+  border-radius: 1px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
@@ -161,9 +149,6 @@ class Movie extends Component<Props> {
   observableState = {
     isUpcoming: false,
     isLoading: true,
-    isMovie: false,
-    movie: {},
-    marginTop: 0,
   }
 
   onChangeTab = (isUpcoming) => {
@@ -181,23 +166,12 @@ class Movie extends Component<Props> {
     }
   }
 
-  onClickMovie = (movie, index) => {
-    this.observableState.isMovie = true;
-    this.observableState.movie = movie;
-    this.observableState.marginTop = 160 * index;
-    if (index > 1) {
-      this.observableState.marginTop = (160 * index) + ((index - 1) * 20);
-    }
-  }
-
   renderMovies = (movies) => (
-    movies.map((each, i) => (
-      <div
-        key={each.id}
-        onClick={() => this.onClickMovie(each, i)}
-      >
-        <MoviesContainer isMovie={this.observableState.isMovie} isId={this.observableState.movie.id === each.id} marginTop={this.observableState.marginTop}>
-          <tbody>
+    movies.map(each => (
+      <div key={each.id}>
+        <Link to={`/movie/${each.id}`}>
+          <MoviesContainer>
+            <tbody>
               <tr>
                 <td style={{ width: '35%' }}>
                   <MoviePoster src={each.posterUrl}/>
@@ -211,9 +185,9 @@ class Movie extends Component<Props> {
                   </InfoContainer>
                 </td>
               </tr>
-            
-          </tbody>
-        </MoviesContainer>
+            </tbody>
+          </MoviesContainer>
+        </Link>
       </div>
     ))
   )
@@ -225,7 +199,6 @@ class Movie extends Component<Props> {
 
     return (
       <Fragment>
-        <Box></Box>
         <div style={{ position: 'fixed', top: 0,  backgroundColor: '#000', width: '100%', zIndex: 10, padding: '0 20px'}}>
           <Label>
             {isUpcoming ?
@@ -254,31 +227,8 @@ class Movie extends Component<Props> {
               </Fragment>
             }
           </MovieContainer>
-          
-          {/* {isMovie &&
-             <div style={{ paddingTop: 140 * index }}>
-             <MoviesContainer>
-               <tbody>
-                  <tr>
-                    <td style={{ width: '25%' }}>
-                      <MoviePoster src={movie.posterUrl}/>
-                    </td>
-                    <td>
-                      <InfoContainer>
-                        <Title>{movie.title}</Title>
-                        <ReleaseDate>{moment(movie.releaseDate).format('DD MMM YYYY')}</ReleaseDate>
-                        <Rating>{movie.rating}</Rating>
-                        <Plot>{truncatePlot(movie.overview, 100)}</Plot>
-                      </InfoContainer>
-                    </td>
-                  </tr>
-               </tbody>
-             </MoviesContainer>
-           </div>
-          } */}
 
         </Container>
-        {/* <Box style={{ top: '94%', left: -45 }}></Box> */}
       </Fragment>
     );
   }

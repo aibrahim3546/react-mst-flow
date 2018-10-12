@@ -22,6 +22,7 @@ const Container = styled.div`
   background-color: #000;
   width: 100%;
   box-shadow: 1px 1px 5px;
+  max-width: 480px;
 `;
 
 const IconContainer = styled.div`

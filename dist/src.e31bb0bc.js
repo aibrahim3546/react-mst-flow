@@ -40489,7 +40489,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var MovieStore = _mobxStateTree.types.model('MovieStore', {
   topRatedMovies: _mobxStateTree.types.optional(_mobxStateTree.types.array(_Movie.default), []),
-  upcomingMovies: _mobxStateTree.types.optional(_mobxStateTree.types.array(_Movie.default), [])
+  upcomingMovies: _mobxStateTree.types.optional(_mobxStateTree.types.array(_Movie.default), []),
+  movie: _mobxStateTree.types.optional(_Movie.default, {})
 }).actions(function (self) {
   return {
     fetchMoviesTopRatedMovies: function fetchMoviesTopRatedMovies() {
@@ -40504,8 +40505,6 @@ var MovieStore = _mobxStateTree.types.model('MovieStore', {
 
       _axios.default.all([self.fetchMoviesTopRatedMovies(), self.fetchUpcomingMovie()]).then(_axios.default.spread(function (topResponse, upcomingResponse) {
         self.setMovies(topResponse.data.results, upcomingResponse.data.results);
-        console.log(topResponse);
-        console.log(upcomingResponse);
         onSuccess();
       }));
     },
@@ -40516,22 +40515,28 @@ var MovieStore = _mobxStateTree.types.model('MovieStore', {
       self.upcomingMovies = upcomingMovies.map(function (each) {
         return _Movie.default.create(each);
       });
-      console.log(self.topRatedMovies);
-      console.log(self.upcomingMovies);
+    },
+    fetchMovie: function fetchMovie() {
+      var body = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var onSuccess = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+      var onError = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+      var id = body.id;
+      var i = self.topRatedMovies.find(function (each) {
+        return each.id === Number(id);
+      });
+
+      if (!i) {
+        i = self.upcomingMovies.find(function (each) {
+          return each.id === Number(id);
+        });
+      }
+
+      var movie = JSON.stringify(i);
+      self.movie = _Movie.default.create(JSON.parse(movie));
+      onSuccess();
     }
   };
 });
-
-function getUserAccount() {
-  return _axios.default.get('/user/12345');
-}
-
-function getUserPermissions() {
-  return _axios.default.get('/user/12345/permissions');
-}
-
-_axios.default.all([getUserAccount(), getUserPermissions()]).then(_axios.default.spread(function (acct, perms) {// Both requests are now complete
-}));
 
 var _default = MovieStore;
 exports.default = _default;
@@ -40599,7 +40604,9 @@ function (_Component) {
 
   _createClass(App, [{
     key: "componentDidMount",
-    value: function componentDidMount() {}
+    value: function componentDidMount() {
+      window.scrollTo(0, 0);
+    }
   }, {
     key: "render",
     value: function render() {
@@ -40612,7 +40619,73 @@ function (_Component) {
 
 var _default = App;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js"}],"views/Home.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js"}],"ScrollToTop.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var React = _interopRequireWildcard(require("react"));
+
+var _reactRouterDom = require("react-router-dom");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var ScrollToTop =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(ScrollToTop, _React$Component);
+
+  function ScrollToTop() {
+    _classCallCheck(this, ScrollToTop);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(ScrollToTop).apply(this, arguments));
+  }
+
+  _createClass(ScrollToTop, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {}
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      if (this.props.history.action !== 'POP') {
+        window.scrollTo(0, 0);
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return this.props.children;
+    }
+  }]);
+
+  return ScrollToTop;
+}(React.Component);
+
+var _default = (0, _reactRouterDom.withRouter)(ScrollToTop);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js"}],"views/Home.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49539,7 +49612,7 @@ var global = arguments[3];
 
 })));
 
-},{}],"views/Movie.js":[function(require,module,exports) {
+},{}],"views/Movies.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49552,6 +49625,8 @@ var _react = _interopRequireWildcard(require("react"));
 var _mobxReact = require("mobx-react");
 
 var _mobx = require("mobx");
+
+var _reactRouterDom = require("react-router-dom");
 
 var _styledComponents = _interopRequireDefault(require("styled-components"));
 
@@ -49579,18 +49654,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _templateObject13() {
-  var data = _taggedTemplateLiteral(["\n  margin-top: 150px;\n  transition: All 0.29s;\n  position: relative;\n  left: ", ";\n  opacity: ", ";\n"]);
-
-  _templateObject13 = function _templateObject13() {
-    return data;
-  };
-
-  return data;
-}
-
 function _templateObject12() {
-  var data = _taggedTemplateLiteral(["\n  color: #888;\n  font-size: 10px;\n"]);
+  var data = _taggedTemplateLiteral(["\n  margin-top: 150px;\n  transition: All 0.29s;\n  position: relative;\n  left: ", ";\n  opacity: ", ";\n"]);
 
   _templateObject12 = function _templateObject12() {
     return data;
@@ -49600,7 +49665,7 @@ function _templateObject12() {
 }
 
 function _templateObject11() {
-  var data = _taggedTemplateLiteral(["\n  color: #FFD700;\n  font-size: 12px;\n  padding-bottom: 10px;\n  font-weight: 500;\n"]);
+  var data = _taggedTemplateLiteral(["\n  color: #888;\n  font-size: 10px;\n"]);
 
   _templateObject11 = function _templateObject11() {
     return data;
@@ -49610,7 +49675,7 @@ function _templateObject11() {
 }
 
 function _templateObject10() {
-  var data = _taggedTemplateLiteral(["\n  color: #333;\n  font-size: 11px;\n  padding-bottom: 10px;\n"]);
+  var data = _taggedTemplateLiteral(["\n  color: #FFD700;\n  font-size: 12px;\n  padding-bottom: 10px;\n  font-weight: 500;\n"]);
 
   _templateObject10 = function _templateObject10() {
     return data;
@@ -49620,7 +49685,7 @@ function _templateObject10() {
 }
 
 function _templateObject9() {
-  var data = _taggedTemplateLiteral(["\n  font-weight: 500;\n  font-size: 13px;\n  padding-bottom: 10px;\n  color: #222;\n"]);
+  var data = _taggedTemplateLiteral(["\n  color: #333;\n  font-size: 11px;\n  padding-bottom: 10px;\n"]);
 
   _templateObject9 = function _templateObject9() {
     return data;
@@ -49630,7 +49695,7 @@ function _templateObject9() {
 }
 
 function _templateObject8() {
-  var data = _taggedTemplateLiteral(["\n  border-radius: 5px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);\n  padding: 10px 15px;\n  background-color: #fff;\n"]);
+  var data = _taggedTemplateLiteral(["\n  font-weight: 500;\n  font-size: 13px;\n  padding-bottom: 10px;\n  color: #222;\n"]);
 
   _templateObject8 = function _templateObject8() {
     return data;
@@ -49640,7 +49705,7 @@ function _templateObject8() {
 }
 
 function _templateObject7() {
-  var data = _taggedTemplateLiteral(["\n  width: 100%;\n  margin-top: 20px;\n  border-collapse: collapse;\n  transition: all 0.25s;\n  opacity: ", ";\n  margin-top: ", ";\n  td {\n    padding: 0;\n  }\n"]);
+  var data = _taggedTemplateLiteral(["\n  border-radius: 1px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);\n  padding: 10px 15px;\n  background-color: #fff;\n"]);
 
   _templateObject7 = function _templateObject7() {
     return data;
@@ -49650,7 +49715,7 @@ function _templateObject7() {
 }
 
 function _templateObject6() {
-  var data = _taggedTemplateLiteral(["\n  height: ", ";\n  width: 100%;\n  background-image: url(", ");\n  background-position:center;\n  background-size: cover;\n  background-repeat: no-repeat;\n  border-radius: 5px;\n  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);\n  max-height: 160px;\n"]);
+  var data = _taggedTemplateLiteral(["\n  width: 100%;\n  margin-top: 20px;\n  border-collapse: collapse;\n  transition: all 0.25s;\n  opacity: ", ";\n  margin-top: ", ";\n  td {\n    padding: 0;\n  }\n"]);
 
   _templateObject6 = function _templateObject6() {
     return data;
@@ -49660,7 +49725,7 @@ function _templateObject6() {
 }
 
 function _templateObject5() {
-  var data = _taggedTemplateLiteral(["\n  width: 120px;\n  transition: all 0.25s;\n  height: 1px;\n  border: 1px solid #fff;\n  border-radius: 3px;\n  margin-left: ", ";\n"]);
+  var data = _taggedTemplateLiteral(["\n  height: ", ";\n  width: 100%;\n  background-image: url(", ");\n  background-position:center;\n  background-size: cover;\n  background-repeat: no-repeat;\n  border-radius: 1px;\n  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);\n  max-height: 160px;\n"]);
 
   _templateObject5 = function _templateObject5() {
     return data;
@@ -49670,7 +49735,7 @@ function _templateObject5() {
 }
 
 function _templateObject4() {
-  var data = _taggedTemplateLiteral(["\n  color: #fff;\n  display: inline-block;\n  font-size: 18px;\n  width: 120px;\n  text-align: center;\n  font-weight: 500;\n  padding-bottom: 15px;\n\n  :active {\n    color: #aaa;\n  }\n"]);
+  var data = _taggedTemplateLiteral(["\n  width: 120px;\n  transition: all 0.25s;\n  height: 1px;\n  border: 3px solid #fff;\n  border-radius: 3px;\n  margin-left: ", ";\n  margin-bottom: 1px;\n"]);
 
   _templateObject4 = function _templateObject4() {
     return data;
@@ -49680,7 +49745,7 @@ function _templateObject4() {
 }
 
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["\n  color: #fff;\n  font-size: 30px;\n  padding-top: 20px;\n  font-weight: 500;\n"]);
+  var data = _taggedTemplateLiteral(["\n  color: #fff;\n  display: inline-block;\n  font-size: 18px;\n  width: 120px;\n  text-align: center;\n  font-weight: 500;\n  padding-bottom: 8px;\n\n  :active {\n    color: #aaa;\n  }\n"]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -49690,7 +49755,7 @@ function _templateObject3() {
 }
 
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["\n  height: 370px;\n  width: 115%;\n  background-color: #000;\n  transform: rotate(11deg);\n  position: fixed;\n  top: -161px;\n  max-width: 480px;\n  z-index: 1;\n"]);
+  var data = _taggedTemplateLiteral(["\n  color: #fff;\n  font-size: 30px;\n  padding-top: 20px;\n  font-weight: 500;\n"]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -49713,37 +49778,35 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
 var Container = _styledComponents.default.div(_templateObject());
 
-var Box = _styledComponents.default.div(_templateObject2());
+var Label = _styledComponents.default.div(_templateObject2());
 
-var Label = _styledComponents.default.div(_templateObject3());
+var Button = _styledComponents.default.div(_templateObject3());
 
-var Button = _styledComponents.default.div(_templateObject4());
-
-var Line = _styledComponents.default.div(_templateObject5(), function (props) {
+var Line = _styledComponents.default.div(_templateObject4(), function (props) {
   return props.isUpcoming ? '120px' : '0';
 });
 
-var MoviePoster = _styledComponents.default.div(_templateObject6(), window.screen.width / 2.5, function (props) {
+var MoviePoster = _styledComponents.default.div(_templateObject5(), window.screen.width / 2.5, function (props) {
   return props.src;
 });
 
-var MoviesContainer = _styledComponents.default.table(_templateObject7(), function (props) {
+var MoviesContainer = _styledComponents.default.table(_templateObject6(), function (props) {
   return props.isMovie && !props.isId ? 0 : 1;
 }, function (props) {
   return props.isId ? "-".concat(props.marginTop) : "20px";
 });
 
-var InfoContainer = _styledComponents.default.div(_templateObject8());
+var InfoContainer = _styledComponents.default.div(_templateObject7());
 
-var Title = _styledComponents.default.div(_templateObject9());
+var Title = _styledComponents.default.div(_templateObject8());
 
-var ReleaseDate = _styledComponents.default.div(_templateObject10());
+var ReleaseDate = _styledComponents.default.div(_templateObject9());
 
-var Rating = _styledComponents.default.div(_templateObject11());
+var Rating = _styledComponents.default.div(_templateObject10());
 
-var Plot = _styledComponents.default.div(_templateObject12());
+var Plot = _styledComponents.default.div(_templateObject11());
 
-var MovieContainer = _styledComponents.default.div(_templateObject13(), function (props) {
+var MovieContainer = _styledComponents.default.div(_templateObject12(), function (props) {
   return props.isLoading ? '-100%' : '0';
 }, function (props) {
   return props.isLoading ? 0 : 1;
@@ -49791,10 +49854,7 @@ function (_Component) {
       });
     }, _this.observableState = {
       isUpcoming: false,
-      isLoading: true,
-      isMovie: false,
-      movie: {},
-      marginTop: 0
+      isLoading: true
     }, _this.onChangeTab = function (isUpcoming) {
       var _assertThisInitialize = _assertThisInitialized(_assertThisInitialized(_this)),
           observableState = _assertThisInitialize.observableState;
@@ -49812,32 +49872,19 @@ function (_Component) {
           _this.observableState.isLoading = false;
         }, 200);
       }
-    }, _this.onClickMovie = function (movie, index) {
-      _this.observableState.isMovie = true;
-      _this.observableState.movie = movie;
-      _this.observableState.marginTop = 160 * index;
-
-      if (index > 1) {
-        _this.observableState.marginTop = 160 * index + (index - 1) * 20;
-      }
     }, _this.renderMovies = function (movies) {
-      return movies.map(function (each, i) {
+      return movies.map(function (each) {
         return _react.default.createElement("div", {
-          key: each.id,
-          onClick: function onClick() {
-            return _this.onClickMovie(each, i);
-          }
-        }, _react.default.createElement(MoviesContainer, {
-          isMovie: _this.observableState.isMovie,
-          isId: _this.observableState.movie.id === each.id,
-          marginTop: _this.observableState.marginTop
-        }, _react.default.createElement("tbody", null, _react.default.createElement("tr", null, _react.default.createElement("td", {
+          key: each.id
+        }, _react.default.createElement(_reactRouterDom.Link, {
+          to: "/movie/".concat(each.id)
+        }, _react.default.createElement(MoviesContainer, null, _react.default.createElement("tbody", null, _react.default.createElement("tr", null, _react.default.createElement("td", {
           style: {
             width: '35%'
           }
         }, _react.default.createElement(MoviePoster, {
           src: each.posterUrl
-        })), _react.default.createElement("td", null, _react.default.createElement(InfoContainer, null, _react.default.createElement(Title, null, each.title), _react.default.createElement(ReleaseDate, null, (0, _moment.default)(each.releaseDate).format('DD MMM YYYY')), _react.default.createElement(Rating, null, each.rating), _react.default.createElement(Plot, null, truncatePlot(each.overview, 100))))))));
+        })), _react.default.createElement("td", null, _react.default.createElement(InfoContainer, null, _react.default.createElement(Title, null, each.title), _react.default.createElement(ReleaseDate, null, (0, _moment.default)(each.releaseDate).format('DD MMM YYYY')), _react.default.createElement(Rating, null, each.rating), _react.default.createElement(Plot, null, truncatePlot(each.overview, 100)))))))));
       });
     }, _temp));
   }
@@ -49861,7 +49908,7 @@ function (_Component) {
           isMovie = _this$observableState.isMovie,
           movie = _this$observableState.movie,
           index = _this$observableState.index;
-      return _react.default.createElement(_react.Fragment, null, _react.default.createElement(Box, null), _react.default.createElement("div", {
+      return _react.default.createElement(_react.Fragment, null, _react.default.createElement("div", {
         style: {
           position: 'fixed',
           top: 0,
@@ -49904,7 +49951,7 @@ function (_Component) {
 var _default = (0, _mobxReact.inject)('rootStore')((0, _mobxReact.observer)(Movie));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","mobx-react":"../node_modules/mobx-react/index.module.js","mobx":"../node_modules/mobx/lib/mobx.module.js","styled-components":"../node_modules/styled-components/dist/styled-components.browser.esm.js","moment":"../node_modules/moment/moment.js"}],"../node_modules/react-router/es/index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","mobx-react":"../node_modules/mobx-react/index.module.js","mobx":"../node_modules/mobx/lib/mobx.module.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","styled-components":"../node_modules/styled-components/dist/styled-components.browser.esm.js","moment":"../node_modules/moment/moment.js"}],"../node_modules/react-router/es/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49992,7 +50039,242 @@ var _matchPath2 = _interopRequireDefault(require("./matchPath"));
 var _withRouter2 = _interopRequireDefault(require("./withRouter"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./MemoryRouter":"../node_modules/react-router/es/MemoryRouter.js","./Prompt":"../node_modules/react-router/es/Prompt.js","./Redirect":"../node_modules/react-router/es/Redirect.js","./Route":"../node_modules/react-router/es/Route.js","./Router":"../node_modules/react-router/es/Router.js","./StaticRouter":"../node_modules/react-router/es/StaticRouter.js","./Switch":"../node_modules/react-router/es/Switch.js","./generatePath":"../node_modules/react-router/es/generatePath.js","./matchPath":"../node_modules/react-router/es/matchPath.js","./withRouter":"../node_modules/react-router/es/withRouter.js"}],"../node_modules/react-icons/lib/iconContext.js":[function(require,module,exports) {
+},{"./MemoryRouter":"../node_modules/react-router/es/MemoryRouter.js","./Prompt":"../node_modules/react-router/es/Prompt.js","./Redirect":"../node_modules/react-router/es/Redirect.js","./Route":"../node_modules/react-router/es/Route.js","./Router":"../node_modules/react-router/es/Router.js","./StaticRouter":"../node_modules/react-router/es/StaticRouter.js","./Switch":"../node_modules/react-router/es/Switch.js","./generatePath":"../node_modules/react-router/es/generatePath.js","./matchPath":"../node_modules/react-router/es/matchPath.js","./withRouter":"../node_modules/react-router/es/withRouter.js"}],"views/MovieInfo.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _mobxReact = require("mobx-react");
+
+var _mobx = require("mobx");
+
+var _reactRouter = require("react-router");
+
+var _styledComponents = _interopRequireDefault(require("styled-components"));
+
+var _moment = _interopRequireDefault(require("moment"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _templateObject8() {
+  var data = _taggedTemplateLiteral(["\n  color: #888;\n  font-size: 15px;\n  line-height: 20px;\n  font-weight: 500;\n  margin-top: 15px;\n"]);
+
+  _templateObject8 = function _templateObject8() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject7() {
+  var data = _taggedTemplateLiteral(["\n  font-weight: 600;\n  font-size: 17px;\n  color: #888;\n"]);
+
+  _templateObject7 = function _templateObject7() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject6() {
+  var data = _taggedTemplateLiteral(["\n  color: #FFD700;\n  font-size: 12px;\n  /* padding-bottom: 10px; */\n  font-weight: 500;\n"]);
+
+  _templateObject6 = function _templateObject6() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject5() {
+  var data = _taggedTemplateLiteral(["\n  color: #333;\n  font-size: 11px;\n  padding-bottom: 10px;\n"]);
+
+  _templateObject5 = function _templateObject5() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject4() {
+  var data = _taggedTemplateLiteral(["\n  font-weight: 500;\n  font-size: 13px;\n  padding-bottom: 10px;\n  color: #222;\n"]);
+
+  _templateObject4 = function _templateObject4() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["\n  border-radius: 1px;\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);\n  padding: 10px 15px;\n  background-color: #fff;\n"]);
+
+  _templateObject3 = function _templateObject3() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["\n  height: ", ";\n  width: 100%;\n  background-image: url(", ");\n  background-position:center;\n  background-size: cover;\n  background-repeat: no-repeat;\n  border-radius: 1px;\n  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);\n  max-height: 160px;\n"]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["\n  width: 100%;\n  height: 30%;\n  background-image: url(", ");\n  background-position: center;\n  background-repeat: no-repeat;\n  background-size: cover;\n  transition: All 0.5s;\n  opacity: ", ";\n  position: relative;\n"]);
+
+  _templateObject = function _templateObject() {
+    return data;
+  };
+
+  return data;
+}
+
+function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+var LandscapePoster = _styledComponents.default.div(_templateObject(), function (props) {
+  return props.src;
+}, function (props) {
+  return props.isLoading ? 0 : 1;
+});
+
+var Poster = _styledComponents.default.div(_templateObject2(), window.screen.width / 2.5, function (props) {
+  return props.src;
+});
+
+var InfoContainer = _styledComponents.default.div(_templateObject3());
+
+var Title = _styledComponents.default.div(_templateObject4());
+
+var ReleaseDate = _styledComponents.default.div(_templateObject5());
+
+var Rating = _styledComponents.default.div(_templateObject6());
+
+var Label = _styledComponents.default.div(_templateObject7());
+
+var Plot = _styledComponents.default.div(_templateObject8());
+
+var MovieInfo =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MovieInfo, _Component);
+
+  function MovieInfo() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    var _temp;
+
+    _classCallCheck(this, MovieInfo);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(MovieInfo)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.observableState = {
+      isLoading: true
+    }, _this.fetchData = function () {
+      var _this$props = _this.props,
+          rootStore = _this$props.rootStore,
+          params = _this$props.match.params;
+      rootStore.movieStore.fetchMovie({
+        id: params.id
+      }, function () {
+        setTimeout(function () {
+          _this.observableState.isLoading = false;
+        }, 50);
+      });
+    }, _temp));
+  }
+
+  _createClass(MovieInfo, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.fetchData();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var movieStore = this.props.rootStore.movieStore;
+      var movie = movieStore.movie;
+      var isLoading = this.observableState.isLoading;
+      return _react.default.createElement(_react.Fragment, null, _react.default.createElement(LandscapePoster, {
+        src: movie.landscapePoster,
+        isLoading: isLoading
+      }), _react.default.createElement("div", {
+        style: {
+          padding: '10px 15px',
+          marginTop: isLoading ? '100%' : -85,
+          opacity: isLoading ? 0 : 1,
+          position: 'relative',
+          transition: 'All 0.5s'
+        }
+      }, _react.default.createElement("table", {
+        style: {
+          width: '100%',
+          borderCollapse: 'collapse'
+        }
+      }, _react.default.createElement("tbody", null, _react.default.createElement("tr", null, _react.default.createElement("td", {
+        style: {
+          width: '35%'
+        }
+      }, _react.default.createElement(Poster, {
+        src: movie.posterUrl
+      })), _react.default.createElement("td", null, _react.default.createElement(InfoContainer, null, _react.default.createElement(Title, null, movie.title), _react.default.createElement(ReleaseDate, null, (0, _moment.default)(movie.releaseDate).format('DD MMM YYYY')), _react.default.createElement(Rating, null, movie.rating)))))), _react.default.createElement("div", {
+        style: {
+          marginTop: 30,
+          padding: '10px 15px',
+          boxShadow: '1px 1px 10px rgba(0,0,0,0.1)',
+          borderRadius: 1
+        }
+      }, _react.default.createElement(Label, null, "Overview"), _react.default.createElement(Plot, null, movie.overview))));
+    }
+  }]);
+
+  return MovieInfo;
+}(_react.Component);
+
+(0, _mobx.decorate)(MovieInfo, {
+  observableState: _mobx.observable,
+  fetchData: _mobx.action
+});
+
+var _default = (0, _reactRouter.withRouter)((0, _mobxReact.inject)('rootStore')((0, _mobxReact.observer)(MovieInfo)));
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","mobx-react":"../node_modules/mobx-react/index.module.js","mobx":"../node_modules/mobx/lib/mobx.module.js","react-router":"../node_modules/react-router/es/index.js","styled-components":"../node_modules/styled-components/dist/styled-components.browser.esm.js","moment":"../node_modules/moment/moment.js"}],"../node_modules/react-icons/lib/iconContext.js":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
@@ -57174,7 +57456,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n  position: fixed;\n  z-index: 10;\n  bottom: 0;\n  background-color: #000;\n  width: 100%;\n  box-shadow: 1px 1px 5px;\n"]);
+  var data = _taggedTemplateLiteral(["\n  position: fixed;\n  z-index: 10;\n  bottom: 0;\n  background-color: #000;\n  width: 100%;\n  box-shadow: 1px 1px 5px;\n  max-width: 480px;\n"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -57279,9 +57561,13 @@ var _stores = _interopRequireDefault(require("./stores"));
 
 var _App = _interopRequireDefault(require("./App"));
 
+var _ScrollToTop = _interopRequireDefault(require("./ScrollToTop"));
+
 var _Home = _interopRequireDefault(require("./views/Home"));
 
-var _Movie = _interopRequireDefault(require("./views/Movie"));
+var _Movies = _interopRequireDefault(require("./views/Movies"));
+
+var _MovieInfo = _interopRequireDefault(require("./views/MovieInfo"));
 
 var _BottomNavBar = _interopRequireDefault(require("./components/BottomNavBar"));
 
@@ -57290,19 +57576,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _default = function _default() {
   return _react.default.createElement(_mobxReact.Provider, {
     rootStore: _stores.default
-  }, _react.default.createElement(_App.default, null, _react.default.createElement(_reactRouterDom.HashRouter, null, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_BottomNavBar.default, null, _react.default.createElement(_reactRouterDom.Route, {
+  }, _react.default.createElement(_App.default, null, _react.default.createElement(_reactRouterDom.HashRouter, null, _react.default.createElement(_ScrollToTop.default, null, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+    exact: true,
+    path: "/movie/:id",
+    component: _MovieInfo.default
+  }), _react.default.createElement(_BottomNavBar.default, null, _react.default.createElement(_reactRouterDom.Route, {
     exact: true,
     path: "/",
     component: _Home.default
   }), _react.default.createElement(_reactRouterDom.Route, {
     exact: true,
     path: "/movies",
-    component: _Movie.default
-  }))))));
+    component: _Movies.default
+  })))))));
 };
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","mobx-react":"../node_modules/mobx-react/index.module.js","./stores":"stores/index.js","./App":"App.js","./views/Home":"views/Home.js","./views/Movie":"views/Movie.js","./components/BottomNavBar":"components/BottomNavBar.js"}],"index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","mobx-react":"../node_modules/mobx-react/index.module.js","./stores":"stores/index.js","./App":"App.js","./ScrollToTop":"ScrollToTop.js","./views/Home":"views/Home.js","./views/Movies":"views/Movies.js","./views/MovieInfo":"views/MovieInfo.js","./components/BottomNavBar":"components/BottomNavBar.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -57345,7 +57635,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65178" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49330" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
