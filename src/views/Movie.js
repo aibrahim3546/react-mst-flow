@@ -4,9 +4,20 @@ import { observable, decorate, action } from 'mobx';
 import styled from 'styled-components';
 import moment from 'moment';
 
+type Props = {
+  rootStore: Object,
+}
+
+type ObservableState = {
+  isLoading: boolean,
+  isMovie: boolean,
+  isUpcoming: boolean,
+  movie: Object,
+  marginTop: number,
+}
 
 const Container = styled.div`
-  padding: 0 20px;
+  padding: 0 20px 80px;
   position: relative;
   z-index: 2;
 `;
@@ -53,7 +64,7 @@ const Line = styled.div`
 `;
 
 const MoviePoster = styled.div`
-  height: 160px;
+  height: ${window.screen.width / 2.95};
   width: 100%;
   background-image: url(${props => props.src});
   background-position:center;
@@ -61,12 +72,16 @@ const MoviePoster = styled.div`
   background-repeat: no-repeat;
   border-radius: 5px;
   box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
+  max-height: 160px;
 `;
 
 const MoviesContainer = styled.table`
   width: 100%;
-  margin-top: 30px;
+  margin-top: 20px;
   border-collapse: collapse;
+  transition: all 0.25s;
+  opacity: ${props => props.isMovie && !props.isId ? 0 : 1};
+  margin-top: ${props => props.isId ? `-${props.marginTop}` : `20px`};
   td {
     padding: 0;
   }
@@ -84,20 +99,20 @@ const InfoContainer = styled.div`
 const Title = styled.div`
   font-weight: 500;
   font-size: 13px;
-  padding-bottom: 13px;
+  padding-bottom: 7px;
   color: #222;
 `;
 
 const ReleaseDate = styled.div`
   color: #333;
   font-size: 11px;
-  padding-bottom: 12px;
+  padding-bottom: 7px;
 `;
 
 const Rating = styled.div`
   color: #FFD700;
   font-size: 12px;
-  padding-bottom: 10px;
+  padding-bottom: 7px;
   font-weight: 500;
 `;
 
@@ -128,11 +143,8 @@ const truncatePlot = function(str, length, ending) {
   }
 };
 
-type Props = {
-  rootStore: Object,
-}
-
 class Movie extends Component<Props> {
+  observableState: ObservableState;
   componentDidMount() {
     this.fetchData();
   }
@@ -149,28 +161,45 @@ class Movie extends Component<Props> {
   observableState = {
     isUpcoming: false,
     isLoading: true,
+    isMovie: false,
+    movie: {},
+    marginTop: 0,
   }
 
   onChangeTab = (isUpcoming) => {
     const { observableState } = this;
-    this.observableState.isLoading = true;
-    if (isUpcoming) {
-      observableState.isUpcoming = true;
-    } else {
-      observableState.isUpcoming = false;
+    if (observableState.isUpcoming !== isUpcoming) {
+      this.observableState.isLoading = true;
+      if (isUpcoming) {
+        observableState.isUpcoming = true;
+      } else {
+        observableState.isUpcoming = false;
+      }
+      setTimeout(() => {
+        this.observableState.isLoading = false;
+      }, 200);
     }
-    setTimeout(() => {
-      this.observableState.isLoading = false;
-    }, 200);
+  }
+
+  onClickMovie = (movie, index) => {
+    this.observableState.isMovie = true;
+    this.observableState.movie = movie;
+    this.observableState.marginTop = 140 * index;
+    if (index > 1) {
+      this.observableState.marginTop = (140 * index) + ((index - 1) * 20);
+    }
   }
 
   renderMovies = (movies) => (
-    movies.map(each => (
-      <div>
-        <MoviesContainer>
+    movies.map((each, i) => (
+      <div
+        key={each.id}
+        onClick={() => this.onClickMovie(each, i)}
+      >
+        <MoviesContainer isMovie={this.observableState.isMovie} isId={this.observableState.movie.id === each.id} marginTop={this.observableState.marginTop}>
           <tbody>
               <tr>
-                <td style={{ width: '35%' }}>
+                <td style={{ width: '25%' }}>
                   <MoviePoster src={each.posterUrl}/>
                 </td>
                 <td>
@@ -185,25 +214,15 @@ class Movie extends Component<Props> {
             
           </tbody>
         </MoviesContainer>
-        
       </div>
-      ))
+    ))
   )
 
   render() {
     const { movieStore } = this.props.rootStore;
     const { topRatedMovies, upcomingMovies } = movieStore;
-    const { isUpcoming, isLoading } = this.observableState;
+    const { isUpcoming, isLoading, isMovie, movie, index } = this.observableState;
 
-    const settings = {
-      dots: false,
-      infinite: false,
-      speed: 200,
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      vertical: true,
-      verticalSwiping: true,
-    };
     return (
       <Fragment>
         <Box></Box>
@@ -224,8 +243,9 @@ class Movie extends Component<Props> {
           <Line isUpcoming={isUpcoming} />
         </div>
         <Container>
+
           <MovieContainer isLoading={isLoading}>
-            {!isLoading && 
+            {!isLoading &&
               <Fragment>
               {isUpcoming ?
                 this.renderMovies(upcomingMovies) :
@@ -234,8 +254,31 @@ class Movie extends Component<Props> {
               </Fragment>
             }
           </MovieContainer>
+          
+          {/* {isMovie &&
+             <div style={{ paddingTop: 140 * index }}>
+             <MoviesContainer>
+               <tbody>
+                  <tr>
+                    <td style={{ width: '25%' }}>
+                      <MoviePoster src={movie.posterUrl}/>
+                    </td>
+                    <td>
+                      <InfoContainer>
+                        <Title>{movie.title}</Title>
+                        <ReleaseDate>{moment(movie.releaseDate).format('DD MMM YYYY')}</ReleaseDate>
+                        <Rating>{movie.rating}</Rating>
+                        <Plot>{truncatePlot(movie.overview, 100)}</Plot>
+                      </InfoContainer>
+                    </td>
+                  </tr>
+               </tbody>
+             </MoviesContainer>
+           </div>
+          } */}
+
         </Container>
-        <Box style={{ top: '94%', left: -45 }}></Box>
+        {/* <Box style={{ top: '94%', left: -45 }}></Box> */}
       </Fragment>
     );
   }
@@ -245,6 +288,7 @@ decorate(Movie, {
   observableState: observable,
   fetchData: action,
   onChangeTab: action,
+  onClickMovie: action,
 })
 
 export default inject('rootStore')(observer(Movie));

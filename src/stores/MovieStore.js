@@ -13,7 +13,7 @@ const MovieStore = types
   })
   .actions(self => ({
     fetchMoviesTopRatedMovies() {
-      return axios.get(`https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`);
+      return axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`);
     },
     fetchUpcomingMovie() {
       return axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}`)
