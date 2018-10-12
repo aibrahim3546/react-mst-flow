@@ -49600,7 +49600,7 @@ function _templateObject12() {
 }
 
 function _templateObject11() {
-  var data = _taggedTemplateLiteral(["\n  color: #FFD700;\n  font-size: 12px;\n  padding-bottom: 7px;\n  font-weight: 500;\n"]);
+  var data = _taggedTemplateLiteral(["\n  color: #FFD700;\n  font-size: 12px;\n  padding-bottom: 10px;\n  font-weight: 500;\n"]);
 
   _templateObject11 = function _templateObject11() {
     return data;
@@ -49610,7 +49610,7 @@ function _templateObject11() {
 }
 
 function _templateObject10() {
-  var data = _taggedTemplateLiteral(["\n  color: #333;\n  font-size: 11px;\n  padding-bottom: 7px;\n"]);
+  var data = _taggedTemplateLiteral(["\n  color: #333;\n  font-size: 11px;\n  padding-bottom: 10px;\n"]);
 
   _templateObject10 = function _templateObject10() {
     return data;
@@ -49620,7 +49620,7 @@ function _templateObject10() {
 }
 
 function _templateObject9() {
-  var data = _taggedTemplateLiteral(["\n  font-weight: 500;\n  font-size: 13px;\n  padding-bottom: 7px;\n  color: #222;\n"]);
+  var data = _taggedTemplateLiteral(["\n  font-weight: 500;\n  font-size: 13px;\n  padding-bottom: 10px;\n  color: #222;\n"]);
 
   _templateObject9 = function _templateObject9() {
     return data;
@@ -49723,7 +49723,7 @@ var Line = _styledComponents.default.div(_templateObject5(), function (props) {
   return props.isUpcoming ? '120px' : '0';
 });
 
-var MoviePoster = _styledComponents.default.div(_templateObject6(), window.screen.width / 2.95, function (props) {
+var MoviePoster = _styledComponents.default.div(_templateObject6(), window.screen.width / 2.5, function (props) {
   return props.src;
 });
 
@@ -49815,10 +49815,10 @@ function (_Component) {
     }, _this.onClickMovie = function (movie, index) {
       _this.observableState.isMovie = true;
       _this.observableState.movie = movie;
-      _this.observableState.marginTop = 140 * index;
+      _this.observableState.marginTop = 160 * index;
 
       if (index > 1) {
-        _this.observableState.marginTop = 140 * index + (index - 1) * 20;
+        _this.observableState.marginTop = 160 * index + (index - 1) * 20;
       }
     }, _this.renderMovies = function (movies) {
       return movies.map(function (each, i) {
@@ -49833,7 +49833,7 @@ function (_Component) {
           marginTop: _this.observableState.marginTop
         }, _react.default.createElement("tbody", null, _react.default.createElement("tr", null, _react.default.createElement("td", {
           style: {
-            width: '25%'
+            width: '35%'
           }
         }, _react.default.createElement(MoviePoster, {
           src: each.posterUrl
@@ -57345,7 +57345,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52831" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65178" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

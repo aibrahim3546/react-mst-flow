@@ -64,7 +64,7 @@ const Line = styled.div`
 `;
 
 const MoviePoster = styled.div`
-  height: ${window.screen.width / 2.95};
+  height: ${window.screen.width / 2.5};
   width: 100%;
   background-image: url(${props => props.src});
   background-position:center;
@@ -99,20 +99,20 @@ const InfoContainer = styled.div`
 const Title = styled.div`
   font-weight: 500;
   font-size: 13px;
-  padding-bottom: 7px;
+  padding-bottom: 10px;
   color: #222;
 `;
 
 const ReleaseDate = styled.div`
   color: #333;
   font-size: 11px;
-  padding-bottom: 7px;
+  padding-bottom: 10px;
 `;
 
 const Rating = styled.div`
   color: #FFD700;
   font-size: 12px;
-  padding-bottom: 7px;
+  padding-bottom: 10px;
   font-weight: 500;
 `;
 
@@ -184,9 +184,9 @@ class Movie extends Component<Props> {
   onClickMovie = (movie, index) => {
     this.observableState.isMovie = true;
     this.observableState.movie = movie;
-    this.observableState.marginTop = 140 * index;
+    this.observableState.marginTop = 160 * index;
     if (index > 1) {
-      this.observableState.marginTop = (140 * index) + ((index - 1) * 20);
+      this.observableState.marginTop = (160 * index) + ((index - 1) * 20);
     }
   }
 
@@ -199,7 +199,7 @@ class Movie extends Component<Props> {
         <MoviesContainer isMovie={this.observableState.isMovie} isId={this.observableState.movie.id === each.id} marginTop={this.observableState.marginTop}>
           <tbody>
               <tr>
-                <td style={{ width: '25%' }}>
+                <td style={{ width: '35%' }}>
                   <MoviePoster src={each.posterUrl}/>
                 </td>
                 <td>
