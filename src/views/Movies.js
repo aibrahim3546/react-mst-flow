@@ -18,6 +18,10 @@ const Container = styled.div`
   padding: 0 20px 80px;
   position: relative;
   z-index: 2;
+  height: 100%;
+  width: 100%;
+  max-width: 480px;
+  overflow-x: hidden;
 `;
 
 const Label = styled.div`
@@ -199,7 +203,7 @@ class Movie extends Component<Props> {
 
     return (
       <Fragment>
-        <div style={{ position: 'fixed', top: 0,  backgroundColor: '#000', width: '100%', zIndex: 10, padding: '0 20px'}}>
+        <div style={{ position: 'fixed', top: 0,  backgroundColor: '#000', width: '100%', zIndex: 10, padding: '0 20px', maxWidth: 480}}>
           <Label>
             {isUpcoming ?
               'Upcoming' : 'Top Rated'
