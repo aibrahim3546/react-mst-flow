@@ -20,12 +20,12 @@ type ObservableState = {
 
 const LandscapePoster = styled.div`
   width: 100%;
-  height: 30%;
+  height: ${window.screen.width / 1.8};
   background-image: url(${props => props.src});
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  transition: All 0.5s;
+  transition: All 0.15s;
   opacity: ${props => props.isLoading ? 0 : 1};
   position: relative;
 `;
@@ -114,9 +114,9 @@ class MovieInfo extends Component<Props> {
     const { movie } = movieStore;
     const { isLoading } = this.observableState;
     return (
-      <Fragment>
+      <div style={{ overflow: 'hidden' }}>
         <LandscapePoster src={movie.landscapePoster} isLoading={isLoading}/>
-        <div style={{ padding: '10px 15px', marginTop: isLoading ? '100%' : -85, opacity: isLoading ? 0 : 1, position: 'relative', transition: 'All 0.5s' }}>
+        <div style={{ padding: '10px 15px', marginTop: isLoading ? '100%' : -85, opacity: isLoading ? 0 : 1, position: 'relative', transition: 'All 0.15s' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <tbody>
               <tr>
@@ -140,7 +140,7 @@ class MovieInfo extends Component<Props> {
           </div>
 
         </div>
-      </Fragment>
+      </div>
     );
   }
 }

@@ -15,12 +15,12 @@ const Container = styled.div`
 
 const Bar = styled.div`
   /* height: 20px; */
-  border: 2px solid #000;
-  background-color: #000;
+  border: 2px solid #fff;
+  background-color: #fff;
   animation: rotate 1s infinite alternate;
   transform-origin: 0% 100%;
   font-weight: 500;
-  color: #fff;
+  color: #000;
   text-align: center;
 
   @keyframes rotate {
@@ -31,18 +31,19 @@ const Bar = styled.div`
 
 const Box = styled.div`
   text-align: center;
-  border: 2px solid #000;
+  border: 2px solid #fff;
   font-size: 20px;
   padding: 0.25px;
-  color: #fff;
+  color: #000;
   /* border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px; */
 `;
 
 const Label = styled.div`
-  background-color: #000;
+  background-color: #fff;
   padding: 15px 0 25px;
   font-weight:  bold;
+  color: #000;
   /* border-bottom-left-radius: 7px;
   border-bottom-right-radius: 7px; */
 `;

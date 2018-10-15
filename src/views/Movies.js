@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
 import { observable, decorate, action } from 'mobx';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import moment from 'moment';
 
 type Props = {
@@ -26,18 +26,20 @@ const Container = styled.div`
 
 const Label = styled.div`
   color: #fff;
-  font-size: 30px;
+  font-size: 20px;
   padding-top: 20px;
+  padding-bottom: 10px;
   font-weight: 500;
+  width: 75px;
+  display: inline-block;
 `;
 
 const Button = styled.div`
   color: #fff;
   display: inline-block;
-  font-size: 18px;
-  width: 120px;
+  font-size: 15px;
+  width: 50%;
   text-align: center;
-  font-weight: 500;
   padding-bottom: 8px;
 
   :active {
@@ -46,32 +48,30 @@ const Button = styled.div`
 `;
 
 const Line = styled.div`
-  width: 120px;
-  transition: all 0.25s;
+  width: 50%;
+  transition: all 0.15s;
   height: 1px;
   border: 3px solid #fff;
-  border-radius: 3px;
-  margin-left: ${props => props.isUpcoming ? '120px' : '0'};
-  margin-bottom: 1px;
+  margin-left: ${props => props.isUpcoming ? '50%' : '0'};
 `;
 
 const MoviePoster = styled.div`
-  height: ${window.screen.width / 2.5};
+  /* height: ${window.screen.width / 2.5}; */
+  height: 160px;
   width: 100%;
   background-image: url(${props => props.src});
   background-position:center;
   background-size: cover;
   background-repeat: no-repeat;
   border-radius: 1px;
-  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
-  max-height: 160px;
+  box-shadow: 1px 1px 5px rgba(255,255,255,0.25);
 `;
 
 const MoviesContainer = styled.table`
   width: 100%;
   margin-top: 20px;
   border-collapse: collapse;
-  transition: all 0.25s;
+  transition: all 0.15s;
   opacity: ${props => props.isMovie && !props.isId ? 0 : 1};
   margin-top: ${props => props.isId ? `-${props.marginTop}` : `20px`};
   td {
@@ -83,20 +83,17 @@ const InfoContainer = styled.div`
   border-radius: 1px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  box-shadow: 1px 1px 5px rgba(0,0,0,0.25);
+  box-shadow: 1px 1px 5px rgba(255,255,255,0.25);
   padding: 10px 15px;
-  background-color: #fff;
 `;
 
 const Title = styled.div`
   font-weight: 500;
   font-size: 13px;
   padding-bottom: 10px;
-  color: #222;
 `;
 
 const ReleaseDate = styled.div`
-  color: #333;
   font-size: 11px;
   padding-bottom: 10px;
 `;
@@ -114,10 +111,14 @@ const Plot = styled.div`
 `;
 
 const MovieContainer = styled.div`
-  margin-top: 150px;
-  transition: All 0.29s;
+  margin-top: 120px;
+  transition: All 0.15s;
   position: relative;
-  left: ${props => props.isLoading ? '-100%' : '0'};
+  ${props => (props.isUpcoming ? css`
+    right: ${props => props.isLoading ? '-100%' : '0'};
+  ` : css`
+    left: ${props => props.isLoading ? '-100%' : '0'};
+  `)}
   opacity: ${props => props.isLoading ? 0 : 1};
 `;
 
@@ -166,7 +167,7 @@ class Movie extends Component<Props> {
       }
       setTimeout(() => {
         this.observableState.isLoading = false;
-      }, 200);
+      }, 150);
     }
   }
 
@@ -199,17 +200,15 @@ class Movie extends Component<Props> {
   render() {
     const { movieStore } = this.props.rootStore;
     const { topRatedMovies, upcomingMovies } = movieStore;
-    const { isUpcoming, isLoading, isMovie, movie, index } = this.observableState;
+    const { isUpcoming, isLoading } = this.observableState;
 
     return (
       <Fragment>
         <div style={{ position: 'fixed', top: 0,  backgroundColor: '#000', width: '100%', zIndex: 10, padding: '0 20px', maxWidth: 480}}>
           <Label>
-            {isUpcoming ?
-              'Upcoming' : 'Top Rated'
-            }
+            Movies
           </Label>
-          <div style={{ paddingRight: 25, marginTop: 25 }}>
+          <div style={{ marginTop: 10 }}>
             <Button onClick={() => this.onChangeTab(false)}>
               Top Rated
             </Button>
@@ -221,7 +220,7 @@ class Movie extends Component<Props> {
         </div>
         <Container>
 
-          <MovieContainer isLoading={isLoading}>
+          <MovieContainer isLoading={isLoading} isUpcoming={isUpcoming}>
             {!isLoading &&
               <Fragment>
               {isUpcoming ?
