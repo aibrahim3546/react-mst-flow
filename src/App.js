@@ -6,48 +6,42 @@ import { observable, decorate } from 'mobx';
 import Loader from './components/Loader';
 
 type Props = {
-	children: Node,
-	rootStore: Object,
-}
+  children: Node,
+  rootStore: Object
+};
 
 type ObservableState = {
-	isLoading: boolean,
-}
+  isLoading: boolean
+};
 
-class App extends Component<Props>  {
-	observableState: ObservableState;
+class App extends Component<Props> {
+  observableState: ObservableState = {
+    isLoading: true
+  };
 
-	componentDidMount() {
-		const { rootStore } = this.props;
+  componentDidMount() {
+    const { rootStore } = this.props;
     rootStore.movieStore.fetchMovies(() => {
-			setTimeout(() => {
-				this.observableState.isLoading = false;
-			}, 4000);
+      setTimeout(() => {
+        this.observableState.isLoading = false;
+      }, 4000);
     });
 
-	}
+    rootStore.movieStore.fetchPopularMoviess(() => {
+      // setTimeout(() => {
+      //   // this.observableState.isLoading = false;
+      // }, 4000);
+    });
+  }
 
-	observableState = {
-		isLoading: true,
-	}
-
-	render() {
-		const { isLoading } = this.observableState;
-		return (
-			<div>
-				{isLoading ? 
-					<Loader /> : 
-					(
-						this.props.children
-					)
-				}
-			</div>
-		);
-	}
+  render() {
+    const { isLoading } = this.observableState;
+    return <div>{isLoading ? <Loader /> : this.props.children}</div>;
+  }
 }
 
 decorate(App, {
-	observableState: observable,
-})
+  observableState: observable
+});
 
 export default inject('rootStore')(observer(App));

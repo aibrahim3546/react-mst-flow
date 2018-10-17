@@ -5,13 +5,15 @@ import { action, decorate, observable } from 'mobx';
 import styled from 'styled-components';
 import Slick from 'react-slick';
 
+import PortraitPoster from '../components/PortraitPoster';
+
 type Props = {
-  rootStore: Object,
-}
+  rootStore: Object
+};
 
 type ObservableState = {
-  isLoading: boolean,
-}
+  isLoading: boolean
+};
 
 const Label = styled.div`
   color: #fff;
@@ -22,43 +24,38 @@ const Label = styled.div`
   display: inline-block;
 `;
 
+const MoreCard = styled(PortraitPoster)`
+  text-align: center;
+  padding-top: 50%;
+  font-weight: bold;
+  background-color: #fff;
+  color: #000;
+`;
+
 const BannerContainer = styled.div`
-  /* & > .slick-dots .slick-thumb .slick-active li {
-    border-color: #fff !important;
-  } */
-  /* height: ${window.screen.width / 1.5}px; */
+  transition: all 0.15s;
+  position: relative;
+  right: ${props => (props.isLoading ? '-100%' : '0')};
 `;
 
 const LandscapePoster = styled.div`
   width: 95%;
   height: ${window.screen.width / 1.8}px;
+  max-height: 260px;
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
   background-image: url(${props => props.src});
   margin: 0 auto;
   border-radius: 1px;
-  box-shadow: 0px 0px 10px rgba(255,255,255,0.25);
   margin-top: 20px;
   margin-bottom: 15px;
-`;
-
-const PortraitPoster = styled.div`
-  width: 90%;
-  height: ${window.screen.width / 2.5}px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  background-image: url(${props => props.src});
-  margin: 0 auto;
-  border-radius: 1px;
-  box-shadow: 1px 0px 10px rgba(255,255,255,0.25);
 `;
 
 const Title = styled.div`
   text-align: center;
   text-overflow: ellipsis;
-  white-space: nowrap; 
+  white-space: nowrap;
   overflow: hidden;
   padding: 5px 12.5px;
   font-size: 15px;
@@ -68,25 +65,26 @@ const MoviesContainer = styled.div`
   margin-top: 30px;
   border-width: 1px 0;
   padding-bottom: 10px;
-  box-shadow: 1px 0px 10px rgba(255,255,255,0.25);
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  border-width: 0.5px 0;
 `;
 
 class Home extends Component<Props> {
-  observableState: ObservableState;
+  observableState: ObservableState = {
+    isLoading: true
+  };
 
   componentDidMount() {
     setTimeout(() => {
       this.observableState.isLoading = false;
-    }, 10)
-  }
-
-  observableState = {
-    isLoading: true,
+    }, 10);
   }
 
   render() {
-    const { rootStore: { movieStore } } = this.props;
-    const { topRatedMovies, upcomingMovies } = movieStore;
+    const {
+      rootStore: { movieStore }
+    } = this.props;
+    const { popularMovies, upcomingMovies } = movieStore;
     const { isLoading } = this.observableState;
 
     const bannerSettings = {
@@ -99,84 +97,102 @@ class Home extends Component<Props> {
       centerMode: true,
       autoplay: true,
       arrows: false,
-      // adaptiveHeight: true,
-      customPaging: () => (
-        <div style={{ border: '2px solid #888' }} />
-      )
+      customPaging: () => <div style={{ border: '2px solid #888' }} />
     };
 
     const posterSettings = {
       dots: false,
       infinite: false,
       speed: 500,
-      slidesToShow: 3,
+      slidesToShow: 4,
       slidesToScroll: 2,
-      arrows: false,
-      // centerPadding: '15px',
-      // centerMode: true,
-      // adaptiveHeight: true,
+      arrows: false
     };
 
     const movies = [
       {
-        label: 'Top Rated',
-        movie: topRatedMovies,
+        label: 'Popular',
+        movie: popularMovies
       },
       {
         label: 'Upcoming',
-        movie: upcomingMovies,
+        movie: upcomingMovies
       }
     ];
 
     return (
-      <div style={{ overflow: 'hidden', paddingBottom:  100 }}>
+      <div style={{ overflow: 'hidden', paddingBottom: 100 }}>
         <div style={{ padding: '10px 20px 0', width: '100%' }}>
-          <Label>
-            Home
-          </Label>
+          <Label>Home</Label>
         </div>
 
-        <BannerContainer style={{ transition: 'all 0.15s', position: 'relative', right: isLoading ? '-100%' : 0  }}>
+        <BannerContainer isLoading={isLoading}>
           <Slick {...bannerSettings}>
-          {topRatedMovies.slice(0,3).map(each => (
-            <div key={each.id} style={{ padding: '0px' }}>
-              <LandscapePoster src={each.landscapePoster} />
-            </div>
-          ))}
+            {popularMovies.slice(0, 3).map(each => (
+              <Link to={`/movie/${each.id}`} key={each.id}>
+                <LandscapePoster src={each.landscapePoster} />
+              </Link>
+            ))}
           </Slick>
         </BannerContainer>
-        
-          
-        <div style={{ transition: 'all 0.15s', position: 'relative', left: isLoading ? '-100%' : 0  }}>
-        {movies.map(item => (
-          <MoviesContainer key={item.label}>
-            <div style={{ padding: '0 20px 10px' }}>
-              <Label style={{ width: '140px', paddingBottom: 5, fontWeight: 'normal' }}>
-                {item.label}
-              </Label>
-            </div>
- 
-            <BannerContainer>
-              <Slick {...posterSettings}>
-              {item.movie.slice(0,6).map(each => (
-                <div key={each.id} style={{ padding: '0 25px' }}>
-                  <Link to={`/movie/${each.id}`}>
-                    <PortraitPoster src={each.posterUrl} />
-                    <Title>{each.title}</Title>
+
+        <div
+          style={{
+            transition: 'all 0.15s',
+            position: 'relative',
+            left: isLoading ? '-100%' : 0
+          }}
+        >
+          {movies.map(item => (
+            <MoviesContainer key={item.label}>
+              <div style={{ padding: '0 20px 10px' }}>
+                <Label style={{ paddingBottom: 5, fontWeight: 'normal' }}>
+                  {item.label}
+                </Label>
+                <div
+                  style={{
+                    paddingBottom: 5,
+                    fontWeight: 'normal',
+                    float: 'right',
+                    paddingTop: 17,
+                    fontSize: 12,
+                    color: '#aaa'
+                  }}
+                >
+                  <Link to={`/movies?list=${item.label.toLowerCase()}`}>
+                    More &gt;
                   </Link>
                 </div>
-              ))}
+              </div>
+
+              <Slick {...posterSettings}>
+                {item.movie.slice(0, 7).map(each => (
+                  <div key={each.id} style={{ padding: '0 25px' }}>
+                    <Link to={`/movie/${each.id}`}>
+                      <PortraitPoster
+                        src={each.posterUrl}
+                        maxWidth={160}
+                        height={window.screen.width / 3}
+                        width="90%"
+                      />
+                      <Title>{each.title}</Title>
+                    </Link>
+                  </div>
+                ))}
                 <div style={{ padding: '0 25px' }}>
-                  <Link to={'/movies'}>
-                    <PortraitPoster style={{ textAlign: 'center', paddingTop: '50%', fontWeight: 'bold', backgroundColor: '#fff', color: '#000' }}>
+                  <Link to={`/movies?list=${item.label.toLowerCase()}`}>
+                    <MoreCard
+                      maxWidth={160}
+                      height={window.screen.width / 3}
+                      width="90%"
+                    >
                       More
-                    </PortraitPoster>
+                    </MoreCard>
                   </Link>
                 </div>
               </Slick>
-            </BannerContainer>
-          </MoviesContainer>
-        ))}
+            </MoviesContainer>
+          ))}
         </div>
       </div>
     );
@@ -185,7 +201,7 @@ class Home extends Component<Props> {
 
 decorate(Home, {
   setName: action,
-  observableState: observable,
-})
+  observableState: observable
+});
 
 export default inject('rootStore')(observer(Home));

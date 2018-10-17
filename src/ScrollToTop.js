@@ -15,6 +15,7 @@ class ScrollToTop extends React.Component<Props> {
   componentDidMount() { }
 
   componentDidUpdate() {
+    // WILL START FROM THE TOP OF THE PAGE EVERYTIME WHEN CHANGE THE ROUTE
     if (this.props.history.action !== 'POP') {
       window.scrollTo(0, 0);
     }

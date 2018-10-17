@@ -1,14 +1,16 @@
 // @flow
 
 import React, { Component, Fragment } from 'react';
+import type { Node } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router'; 
+import type { Location } from 'react-router-dom';
 import { FaHome, FaFilm } from 'react-icons/fa';
 
 type Props = {
-  children: React.Node,
-  location: Object,
+  children: Node,
+  location: Location,
 }
 
 type ObservableState = {
@@ -21,7 +23,7 @@ const Container = styled.div`
   bottom: 0;
   background-color: #000;
   width: 100%;
-  box-shadow: 1px 1px 5px;
+  box-shadow: 0px 1px 5px rgba(255,255,255,0.25);
   max-width: 480px;
 `;
 
@@ -31,9 +33,6 @@ const IconContainer = styled.div`
   padding: 10px 0;
   font-size: ${props => props.primary ? '30px' : '25px'};;
   cursor: pointer;
-  :active {
-    /* color: #777; */
-  }
 `;
 
 class BottomNavBar extends Component<Props> {

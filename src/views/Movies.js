@@ -1,18 +1,36 @@
+// @flow
+
 import React, { Component, Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
 import { observable, decorate, action } from 'mobx';
+import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import type { RouterHistory, LocationShape } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import moment from 'moment';
+import queryString from 'query-string';
+
+import MovieCard from '../components/MovieCard';
 
 type Props = {
   rootStore: Object,
-}
+  history: RouterHistory,
+  location: LocationShape
+};
 
 type ObservableState = {
   isLoading: boolean,
-  isUpcoming: boolean,
-}
+  isUpcoming: boolean
+};
+
+const TopBarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  background-color: #000;
+  width: 100%;
+  z-index: 10;
+  padding: 0 20px;
+  max-width: 480px;
+`;
 
 const Container = styled.div`
   padding: 0 20px 80px;
@@ -52,185 +70,101 @@ const Line = styled.div`
   transition: all 0.15s;
   height: 1px;
   border: 3px solid #fff;
-  margin-left: ${props => props.isUpcoming ? '50%' : '0'};
-`;
-
-const MoviePoster = styled.div`
-  /* height: ${window.screen.width / 2.5}; */
-  height: 160px;
-  width: 100%;
-  background-image: url(${props => props.src});
-  background-position:center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  border-radius: 1px;
-  box-shadow: 1px 1px 5px rgba(255,255,255,0.25);
-`;
-
-const MoviesContainer = styled.table`
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-  transition: all 0.15s;
-  opacity: ${props => props.isMovie && !props.isId ? 0 : 1};
-  margin-top: ${props => props.isId ? `-${props.marginTop}` : `20px`};
-  td {
-    padding: 0;
-  }
-`;
-
-const InfoContainer = styled.div`
-  border-radius: 1px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  box-shadow: 1px 1px 5px rgba(255,255,255,0.25);
-  padding: 10px 15px;
-`;
-
-const Title = styled.div`
-  font-weight: 500;
-  font-size: 13px;
-  padding-bottom: 10px;
-`;
-
-const ReleaseDate = styled.div`
-  font-size: 11px;
-  padding-bottom: 10px;
-`;
-
-const Rating = styled.div`
-  color: #FFD700;
-  font-size: 12px;
-  padding-bottom: 10px;
-  font-weight: 500;
-`;
-
-const Plot = styled.div`
-  color: #888;
-  font-size: 10px;
+  margin-left: ${props => (props.isUpcoming ? '50%' : '0')};
 `;
 
 const MovieContainer = styled.div`
   margin-top: 120px;
   transition: All 0.15s;
   position: relative;
-  ${props => (props.isUpcoming ? css`
-    right: ${props => props.isLoading ? '-100%' : '0'};
-  ` : css`
-    left: ${props => props.isLoading ? '-100%' : '0'};
-  `)}
-  opacity: ${props => props.isLoading ? 0 : 1};
+  ${props =>
+    props.isUpcoming
+      ? css`
+          right: ${props.isLoading ? '-100%' : '0'};
+        `
+      : css`
+          left: ${props.isLoading ? '-100%' : '0'};
+        `}
+  opacity: ${props => (props.isLoading ? 0 : 1)};
 `;
 
-const truncatePlot = function(str, length, ending) {
-  if (length == null) {
-    length = 100;
-  }
-  if (ending == null) {
-    ending = '...';
-  }
-  if (str.length > length) {
-    return str.substring(0, length - ending.length) + ending;
-  } else {
-    return str;
-  }
-};
-
 class Movie extends Component<Props> {
-  observableState: ObservableState;
+  observableState: ObservableState = {
+    isUpcoming: false,
+    isLoading: true
+  };
+
   componentDidMount() {
     this.fetchData();
   }
 
   fetchData = () => {
-    const { rootStore } = this.props;
+    const { rootStore, location } = this.props;
+    const { list } = queryString.parse(location.search);
+    console.log(list);
+
+    if (list === 'upcoming') {
+      this.observableState.isUpcoming = true;
+    }
 
     rootStore.movieStore.fetchMovies(() => {
       this.observableState.isLoading = false;
       console.log('SUCESS');
     });
-  }
+  };
 
-  observableState = {
-    isUpcoming: false,
-    isLoading: true,
-  }
-
-  onChangeTab = (isUpcoming) => {
+  onChangeTab = isUpcoming => {
+    const { history } = this.props;
     const { observableState } = this;
+
     if (observableState.isUpcoming !== isUpcoming) {
       this.observableState.isLoading = true;
       if (isUpcoming) {
         observableState.isUpcoming = true;
+        history.replace('/movies?list=upcoming');
       } else {
         observableState.isUpcoming = false;
+        history.replace('/movies?list=popular');
       }
       setTimeout(() => {
         this.observableState.isLoading = false;
       }, 150);
     }
-  }
+  };
 
-  renderMovies = (movies) => (
+  renderMovies = movies =>
     movies.map(each => (
-      <div key={each.id}>
-        <Link to={`/movie/${each.id}`}>
-          <MoviesContainer>
-            <tbody>
-              <tr>
-                <td style={{ width: '35%' }}>
-                  <MoviePoster src={each.posterUrl}/>
-                </td>
-                <td>
-                  <InfoContainer>
-                    <Title>{each.title}</Title>
-                    <ReleaseDate>{moment(each.releaseDate).format('DD MMM YYYY')}</ReleaseDate>
-                    <Rating>{each.rating}</Rating>
-                    <Plot>{truncatePlot(each.overview, 100)}</Plot>
-                  </InfoContainer>
-                </td>
-              </tr>
-            </tbody>
-          </MoviesContainer>
-        </Link>
-      </div>
-    ))
-  )
+      <Link to={`/movie/${each.id}`} key={each.id}>
+        <MovieCard movie={each} isPlot />
+      </Link>
+    ));
 
   render() {
     const { movieStore } = this.props.rootStore;
-    const { topRatedMovies, upcomingMovies } = movieStore;
+    const { popularMovies, upcomingMovies } = movieStore;
     const { isUpcoming, isLoading } = this.observableState;
 
     return (
       <Fragment>
-        <div style={{ position: 'fixed', top: 0,  backgroundColor: '#000', width: '100%', zIndex: 10, padding: '0 20px', maxWidth: 480}}>
-          <Label>
-            Movies
-          </Label>
+        <TopBarContainer>
+          <Label>Movies</Label>
           <div style={{ marginTop: 10 }}>
-            <Button onClick={() => this.onChangeTab(false)}>
-              Top Rated
-            </Button>
-            <Button onClick={() => this.onChangeTab(true)}>
-              Upcoming
-            </Button>
+            <Button onClick={() => this.onChangeTab(false)}>Popular</Button>
+            <Button onClick={() => this.onChangeTab(true)}>Upcoming</Button>
           </div>
           <Line isUpcoming={isUpcoming} />
-        </div>
+        </TopBarContainer>
+
         <Container>
-
           <MovieContainer isLoading={isLoading} isUpcoming={isUpcoming}>
-            {!isLoading &&
+            {!isLoading && (
               <Fragment>
-              {isUpcoming ?
-                this.renderMovies(upcomingMovies) :
-                this.renderMovies(topRatedMovies)
-              }
+                {isUpcoming
+                  ? this.renderMovies(upcomingMovies)
+                  : this.renderMovies(popularMovies)}
               </Fragment>
-            }
+            )}
           </MovieContainer>
-
         </Container>
       </Fragment>
     );
@@ -241,7 +175,7 @@ decorate(Movie, {
   observableState: observable,
   fetchData: action,
   onChangeTab: action,
-  onClickMovie: action,
-})
+  onClickMovie: action
+});
 
-export default inject('rootStore')(observer(Movie));
+export default withRouter(inject('rootStore')(observer(Movie)));

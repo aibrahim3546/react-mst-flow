@@ -1,39 +1,56 @@
 // @flow
 
-import { types } from 'mobx-state-tree';
-import Movie from '../models/Movie';
+import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
-import http from '../utils/http';
+import Movie from '../models/Movie';
 import { API_KEY } from '../../config';
 
 const MovieStore = types
   .model('MovieStore', {
-    topRatedMovies: types.optional(types.array(Movie), []),
+    popularMovies: types.optional(types.array(Movie), []),
     upcomingMovies: types.optional(types.array(Movie), []),
-    movie: types.optional(Movie, {}),
+    movie: types.optional(Movie, {})
   })
   .actions(self => ({
-    fetchMoviesTopRatedMovies() {
-      return axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`);
+    fetchPopularMoviess: flow(function* fetchPopularMoviess() {
+      try {
+        const response = yield axios.get(
+          `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
+        );
+        console.log(response);
+      } catch (error) {
+        console.warn(error);
+      }
+    }),
+    fetchPopularMovies() {
+      return axios.get(
+        `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
+      );
     },
     fetchUpcomingMovie() {
-      return axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}`)
+      return axios.get(
+        `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}`
+      );
     },
-    fetchMovies(onSuccess = () => {}, onError = () => {}) {
-      axios.all([self.fetchMoviesTopRatedMovies(), self.fetchUpcomingMovie()])
-      .then(axios.spread((topResponse, upcomingResponse) => {
-        self.setMovies(topResponse.data.results, upcomingResponse.data.results);
-        onSuccess();
-      }));
+    fetchMovies(onSuccess = () => {}) {
+      axios.all([self.fetchPopularMovies(), self.fetchUpcomingMovie()]).then(
+        axios.spread((popularResponse, upcomingResponse) => {
+          self.setMovies(
+            popularResponse.data.results,
+            upcomingResponse.data.results
+          );
+          onSuccess();
+        })
+      );
     },
-    setMovies(topMovies, upcomingMovies) {
-      self.topRatedMovies = topMovies.map(each => Movie.create(each));
+    setMovies(popularMovies, upcomingMovies) {
+      self.popularMovies = popularMovies.map(each => Movie.create(each));
       self.upcomingMovies = upcomingMovies.map(each => Movie.create(each));
     },
-    fetchMovie(body = {}, onSuccess = () => {}, onError = () => {}) {
+    fetchMovie(body = {}, onSuccess = () => {}) {
       const { id } = body;
 
-      let i = self.topRatedMovies.find(each => each.id === Number(id));
+      let i = self.popularMovies.find(each => each.id === Number(id));
       if (!i) {
         i = self.upcomingMovies.find(each => each.id === Number(id));
       }
