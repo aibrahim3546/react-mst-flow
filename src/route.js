@@ -19,15 +19,14 @@ export default () => (
       <HashRouter>
         <ScrollToTop>
           <Switch>
-            <Route exact path="/movie/:id" component={MovieInfo}/>
+            <Route exact path="/movie/:id" component={MovieInfo} />
             <BottomNavBar>
               <Route exact path="/" component={Home} />
-              <Route exact path="/movies" component={Movies}/>
+              <Route exact path="/movies" component={Movies} />
             </BottomNavBar>
           </Switch>
         </ScrollToTop>
       </HashRouter>
     </App>
   </Provider>
-  
 );

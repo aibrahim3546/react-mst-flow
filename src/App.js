@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import type { Node } from 'react';
 import { inject, observer } from 'mobx-react';
-import { observable, decorate } from 'mobx';
+import { observable, decorate, action } from 'mobx';
 import Loader from './components/Loader';
 
 type Props = {
@@ -20,19 +20,33 @@ class App extends Component<Props> {
   };
 
   componentDidMount() {
-    const { rootStore } = this.props;
-    rootStore.movieStore.fetchMovies(() => {
-      setTimeout(() => {
-        this.observableState.isLoading = false;
-      }, 4000);
-    });
-
-    rootStore.movieStore.fetchPopularMoviess(() => {
-      // setTimeout(() => {
-      //   // this.observableState.isLoading = false;
-      // }, 4000);
-    });
+    this.fetchData();
   }
+
+  fetchData = async () => {
+    const {
+      rootStore: { movieStore }
+    } = this.props;
+
+    await movieStore.fetchPopularMovies({
+      body: {},
+      success: () => {},
+      error: () => {
+        this.observableState.isLoading = false;
+      }
+    });
+    movieStore.fetchUpcomingMovies({
+      body: {},
+      success: () => {
+        setTimeout(() => {
+          this.observableState.isLoading = false;
+        }, 4000);
+      },
+      error: () => {
+        this.observableState.isLoading = false;
+      }
+    });
+  };
 
   render() {
     const { isLoading } = this.observableState;
@@ -41,7 +55,8 @@ class App extends Component<Props> {
 }
 
 decorate(App, {
-  observableState: observable
+  observableState: observable,
+  fetchData: action
 });
 
 export default inject('rootStore')(observer(App));

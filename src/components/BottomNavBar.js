@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router'; 
 import type { Location } from 'react-router-dom';
-import { FaHome, FaFilm } from 'react-icons/fa';
 
 type Props = {
   children: Node,
@@ -44,12 +43,12 @@ class BottomNavBar extends Component<Props> {
     menu: [
       {
         label: 'Home',
-        icon: <FaHome />,
+        icon: <i className="fas fa-home"></i>,
         path: '/',
       },
       {
         label: 'Movies',
-        icon: <FaFilm style={{ fontWeight: 'bolder' }} />,
+        icon: <i className="fas fa-film"></i>,
         path: '/movies'
       }
     ]

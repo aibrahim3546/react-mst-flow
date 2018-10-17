@@ -95,23 +95,16 @@ class Movie extends Component<Props> {
   };
 
   componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData = () => {
-    const { rootStore, location } = this.props;
+    const { location } = this.props;
     const { list } = queryString.parse(location.search);
-    console.log(list);
 
     if (list === 'upcoming') {
       this.observableState.isUpcoming = true;
     }
-
-    rootStore.movieStore.fetchMovies(() => {
+    setTimeout(() => {
       this.observableState.isLoading = false;
-      console.log('SUCESS');
-    });
-  };
+    }, 50);
+  }
 
   onChangeTab = isUpcoming => {
     const { history } = this.props;

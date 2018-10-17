@@ -67,19 +67,13 @@ class MovieInfo extends Component<Props> {
 
   fetchData = () => {
     const {
-      rootStore,
+      rootStore: { movieStore },
       match: { params }
     } = this.props;
-    rootStore.movieStore.fetchMovie(
-      {
-        id: params.id
-      },
-      () => {
-        setTimeout(() => {
-          this.observableState.isLoading = false;
-        }, 50);
-      }
-    );
+    movieStore.fetchMovie(params.id);
+    setTimeout(() => {
+      this.observableState.isLoading = false;
+    }, 50);
   };
 
   render() {
