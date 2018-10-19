@@ -2,7 +2,7 @@
 
 import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
-import Movie from '../models/Movie';
+import { Movie } from '../models';
 import { API_KEY } from '../config';
 
 const url = endpoint =>

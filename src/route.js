@@ -7,9 +7,9 @@ import App from './App';
 
 import ScrollToTop from './ScrollToTop';
 
-import Home from './views/Home';
-import Movies from './views/Movies';
-import MovieInfo from './views/MovieInfo';
+import Home from './views/home/Home';
+import Movies from './views/movies/Movies';
+import MovieInfo from './views/movie-info/MovieInfo';
 
 import BottomNavBar from './components/BottomNavBar';
 

@@ -11,7 +11,7 @@ const Movie = types
     backdrop_path: '',
     overview: '',
     release_date: '',
-    vote_average: 0,
+    vote_average: 0
   })
   .views(self => ({
     get posterUrl() {

@@ -1,3 +1,6 @@
+@import "../node_modules/slick-carousel/slick/slick-theme.css";
+@import "../node_modules/slick-carousel/slick/slick.css";
+
 * {
   margin: 0;
   padding: 0;
@@ -43,4 +46,9 @@ a {
 table {
   width: 100%;
   color: #fff;
+}
+
+.home-page .slick-dots .slick-active > div {
+  border-color: #fff !important;
+  border-width: 3px !important;
 }
