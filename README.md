@@ -1,5 +1,5 @@
 ## Movie Buzz
-The app made up with the [TMDB Developer API](https://developers.themoviedb.org/3/getting-started/introduction). In order to run this app you frst need to create account at The Movie Database (TMDB) an get your API key.
+The app made up with the [TMDB Developer API](https://developers.themoviedb.org/3/getting-started/introduction). In order to run this app you first need to create account at The Movie Database (TMDB) an get your API key.
 
 ## Features
 * **React** - react v16
