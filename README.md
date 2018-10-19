@@ -1,5 +1,5 @@
 ## Movie Buzz
-The app made up with the [TMDB Developer API](https://developers.themoviedb.org/3/getting-started/introduction). In order to run this app you first need to create account at The Movie Database (TMDB) an get your API key.
+This app is made up with the [TMDB Developer API](https://developers.themoviedb.org/3/getting-started/introduction). In order to run this app you need to create account at The Movie Database (TMDB) and get your API key.
 
 ## Features
 * **React** - react v16
@@ -19,7 +19,7 @@ You can also use this as a boilerplate to start your next **ReactJS** project. T
 
 ## Quick Start
 ```
-git clone <url here>
+git clone https://github.com/aibrahim3546/movie-buzz.git
 // if using npm
 npm install
 // if using yarn
@@ -42,4 +42,5 @@ yarn start
 
 **ENJOY**
 
-
+**CONTRIBUTION ARE WELCOME**
+**Feel free to contribute**
