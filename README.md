@@ -29,6 +29,8 @@ Create a **config.js** file inside src folder
 
 config.js
 ```
+// Note that API KEY are normally stored in the backend.
+// This app was made for fun and learning purpose only only.
 const API_KEY = 'YOUR_TMDB_API_KEY';
 export { API_KEY };
 ```
