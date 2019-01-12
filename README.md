@@ -1,6 +1,10 @@
 ## Movie Buzz
 This app is made for fun and learning purpose. This app contain information about popular and upcoming movies, where you can get some basic information about the movie such as **Rating**, **Release Date** and **Overview**. This app is made up with the [TMDB Developer API](https://developers.themoviedb.org/3/getting-started/introduction). In order to run this app you need to create account at The Movie Database (TMDB) and get your API key.
 
+<p align="center">
+  <img src="https://media.giphy.com/media/257JvByOKxbaJuhfTP/giphy.gif" alt=""/>
+</p>
+
 ## Features
 * **React** - react v16
 * **Parcel** - parcel-bundler v1.10
