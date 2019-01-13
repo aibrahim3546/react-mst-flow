@@ -1,4 +1,8 @@
-## Movie Buzz
+
+## react-mst-flow-boilerplate
+This boilerplate is beginner friendly and if you dont know mobx you can get started by reading their documentation [here](https://mobx.js.org/intro/overview.html). This boilerplate also uses mobx-state-tree(mst) you can get their documentation at [here](https://github.com/mobxjs/mobx-state-tree)
+
+## TMDB
 This app is made for fun and learning purpose. This app contain information about popular and upcoming movies, where you can get some basic information about the movie such as **Rating**, **Release Date** and **Overview**. This app is made up with the [TMDB Developer API](https://developers.themoviedb.org/3/getting-started/introduction). In order to run this app you need to create account at The Movie Database (TMDB) and get your API key.
 
 <p align="center">
@@ -17,9 +21,6 @@ This app is made for fun and learning purpose. This app contain information abou
 
 ### Other Library
 This app are also using other library such as [momentjs](https://momentjs.com/) and [react slick](https://github.com/akiran/react-slick) to make the app look nicer ;)
-
-## react-parcel-mst-flow-boilerplate
-You can also use this as a boilerplate to start your next **ReactJS** project. This boilerplate is beginner friendly and if you dont know mobx you can get started by reading their documentation [here](https://mobx.js.org/intro/overview.html).
 
 ## Quick Start
 ```
