@@ -24,8 +24,8 @@ This app are also using other library such as [momentjs](https://momentjs.com/) 
 
 ## Quick Start
 ```
-git clone https://github.com/aibrahim3546/react-mst-flow-boilerplate.git
-cd react-mst-flow-boilerplate
+git clone https://github.com/aibrahim3546/react-mst-flow.git
+cd react-mst-flow
 
 // if using npm
 npm install
